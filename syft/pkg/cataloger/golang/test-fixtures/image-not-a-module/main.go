@@ -1,30 +1,19 @@
 package main
 
-import (
-	"context"
-	"os"
-
-	"github.com/mholt/archives"
-)
+import "github.com/anchore/archiver/v3"
 
 func main() {
-	z := archives.Zip{
-		SelectiveCompression: true,
-		ContinueOnError:      false,
+
+	z := archiver.Zip{
+		MkdirAll:               true,
+		SelectiveCompression:   true,
+		ContinueOnError:        false,
+		OverwriteExisting:      false,
+		ImplicitTopLevelFolder: false,
 	}
 
-	ctx := context.Background()
-	archive, err := os.Create("test.zip")
+	err := z.Archive([]string{"main.go"}, "test.zip")
 	if err != nil {
-		panic(err)
-	}
-
-	archiveFiles, err := archives.FilesFromDisk(ctx, nil, map[string]string{"main.go": ""})
-	if err != nil {
-		panic(err)
-	}
-
-	if err = z.Archive(ctx, archive, archiveFiles); err != nil {
 		panic(err)
 	}
 }
